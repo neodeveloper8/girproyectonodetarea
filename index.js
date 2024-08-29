@@ -1,6 +1,12 @@
 const express = require('express');
 const app = express();
 
+// Middleware para procesar cuerpos de solicitud JSON
+app.use(express.json());
+
+// Middleware para procesar cuerpos de solicitud URL-encoded
+app.use(express.urlencoded({ extended: true }));
+
 const productos = [
     { id: 1, nombre: 'Iphone 15', precio: 5000 },
     { id: 2, nombre: 'Samsung S24', precio: 4800 },
@@ -13,6 +19,7 @@ const clientes = [
     { id: 3, nombre: 'Rodrigo', apellido: 'Jimenez' }
 ];
 
+// Obtener productos y clientes juntos
 app.get('/productos-clientes', (req, res) => {
     res.json({
         productos: productos,
@@ -20,14 +27,17 @@ app.get('/productos-clientes', (req, res) => {
     });
 });
 
+// Obtener todos los productos
 app.get('/productos', (req, res) => {
     res.json(productos);
 });
 
+// Obtener todos los clientes
 app.get('/clientes', (req, res) => {
     res.json(clientes);
 });
 
+// Crear un nuevo producto
 app.post('/productos', (req, res) => {
     const nuevoProducto = {
         id: productos.length + 1,
@@ -38,6 +48,7 @@ app.post('/productos', (req, res) => {
     res.status(201).json(nuevoProducto);
 });
 
+// Crear un nuevo cliente
 app.post('/clientes', (req, res) => {
     const nuevoCliente = {
         id: clientes.length + 1,
@@ -48,7 +59,7 @@ app.post('/clientes', (req, res) => {
     res.status(201).json(nuevoCliente);
 });
 
-// PUT: Actualizar un producto existente
+// Actualizar un producto existente
 app.put('/productos/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const producto = productos.find(p => p.id === id);
@@ -63,6 +74,7 @@ app.put('/productos/:id', (req, res) => {
     res.json(producto);
 });
 
+// Actualizar un cliente existente
 app.put('/clientes/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const cliente = clientes.find(p => p.id === id);
@@ -72,12 +84,12 @@ app.put('/clientes/:id', (req, res) => {
     }
 
     cliente.nombre = req.body.nombre || cliente.nombre;
-    cliente.apellido = req.body.apellido || cliente.precio;
+    cliente.apellido = req.body.apellido || cliente.apellido;
 
     res.json(cliente);
 });
 
-// DELETE: Eliminar un producto existente
+// Eliminar un producto existente
 app.delete('/productos/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const indice = productos.findIndex(p => p.id === id);
@@ -90,7 +102,7 @@ app.delete('/productos/:id', (req, res) => {
     res.json(productoEliminado);
 });
 
-// DELETE: Eliminar un producto existente
+// Eliminar un cliente existente
 app.delete('/clientes/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const indice = clientes.findIndex(p => p.id === id);
@@ -102,8 +114,6 @@ app.delete('/clientes/:id', (req, res) => {
     const clienteEliminado = clientes.splice(indice, 1);
     res.json(clienteEliminado);
 });
-
-
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
